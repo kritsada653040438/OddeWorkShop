@@ -9,4 +9,10 @@ class CommentsController < ApplicationController
     def comment_params
       params.expect(comment: [:commenter, :body])
     end
+    
+  private
+  def comment_params
+    params.expect(comment: [:commenter, :body, :status])
+  end
+
 end

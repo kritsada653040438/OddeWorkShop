@@ -46,4 +46,10 @@ class ArticlesController < ApplicationController
     def article_params
       params.expect(article: [:title, :body])
     end
+    
+  private
+  def article_params
+    params.expect(article: [:title, :body, :status])
+  end
+
 end
