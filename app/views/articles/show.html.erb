@@ -1,17 +1,116 @@
-<h1><%= @article.title %></h1>
+<div class="container mx-auto px-4 py-8">
+  <%= form_with model: @article, 
+               class: "max-w-2xl mx-auto bg-white shadow-2xl rounded-2xl p-10 space-y-7 border-t-4 border-blue-600" do |form| %>
+    
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+        <%= @article.new_record? ? "Create New Article" : "Edit Article" %>
+      </h1>
+      <p class="text-gray-600 mt-2">
+        <%= @article.new_record? ? "Share your thoughts with the world" : "Refine your article" %>
+      </p>
+    </div>
 
-<p><%= @article.body %></p>
+    <div class="space-y-6">
+      <div>
+        <%= form.label :title, class: "block text-md font-semibold text-gray-800 mb-3" %>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+            <i class="fas fa-heading"></i>
+          </span>
+          <%= form.text_field :title,
+              class: "w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "Enter a captivating title" %>
+        </div>
+        <% @article.errors.full_messages_for(:title).each do |message| %>
+          <div class="text-red-600 text-sm mt-2 flex items-center">
+            <i class="fas fa-exclamation-circle mr-2"></i><%= message %>
+          </div>
+        <% end %>
+      </div>
 
-<ul>
-  <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article), data: {
-                    turbo_method: :delete,
-                    turbo_confirm: "Are you sure?"
-                  } %></li>
-</ul>
+      <div>
+        <%= form.label :body, class: "block text-md font-semibold text-gray-800 mb-3" %>
+        <%= form.text_area :body,
+            rows: 8,
+            class: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y",
+            placeholder: "Write your article content here... Share your insights, stories, or knowledge." %>
+        <% @article.errors.full_messages_for(:body).each do |message| %>
+          <div class="text-red-600 text-sm mt-2 flex items-center">
+            <i class="fas fa-exclamation-circle mr-2"></i><%= message %>
+          </div>
+        <% end %>
+      </div>
 
-<h2>Comments</h2>
-<%= render @article.comments %>
+      <div>
+        <%= form.label :status, class: "block text-md font-semibold text-gray-800 mb-3" %>
+        <%= form.select :status,
+    Visible::VALID_STATUSES,
+    { selected: @article.status || 'public' },
+    class: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" do |status| %>
+  <% if status.present? %>
+    <option value="<%= status %>" <%= @article.status == status ? 'selected' : '' %>>
+      <%= status.to_s.gsub('_', ' ').capitalize %>
+      <span class="text-gray-500">
+        <%= status == 'public' ? '- Visible to everyone' : 
+            status == 'private' ? '- Only visible to you' : 
+            '- Limited visibility' %>
+      </span>
+    </option>
+  <% end %>
+<% end %>
+      </div>
 
-<h2>Add a comment:</h2>
-<%= render "comments/form", article: @article %>
+      <div class="mt-8">
+        <%= form.submit "Save Article",
+            class: "w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3.5 rounded-xl 
+                     hover:from-blue-700 hover:to-blue-800 transition duration-300 ease-in-out 
+                     transform hover:-translate-y-1 hover:scale-105 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+      </div>
+    </div>
+  <% end %>
+
+  <% unless @article.new_record? %>
+    <div class="max-w-2xl mx-auto mt-8 bg-white shadow-xl rounded-2xl p-6">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-900">Article Actions</h2>
+        <div class="flex space-x-4">
+          <%= link_to edit_article_path(@article),
+              class: "px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center" do %>
+            <i class="fas fa-edit mr-2"></i>Edit
+          <% end %>
+          
+          <%= link_to article_path(@article),
+              data: {
+                turbo_method: :delete,
+                turbo_confirm: "Are you sure you want to permanently delete this article?"
+              },
+              class: "px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center" do %>
+            <i class="fas fa-trash mr-2"></i>Delete
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="max-w-2xl mx-auto mt-8 bg-white shadow-xl rounded-2xl p-6">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Comments</h2>
+    
+    <% if @article.comments.any? %>
+      <div class="space-y-4">
+        <%= render @article.comments %>
+      </div>
+    <% else %>
+      <div class="text-center text-gray-500 py-4">
+        <i class="fas fa-comment-slash text-3xl mb-4"></i>
+        <p>No comments yet. Be the first to share your thoughts!</p>
+      </div>
+    <% end %>
+
+    <div class="mt-8 border-t pt-6">
+      <h3 class="text-xl font-semibold text-gray-900 mb-4">Add a comment:</h3>
+      <%= render "comments/form", article: @article %>
+    </div>
+  </div>
+</div>

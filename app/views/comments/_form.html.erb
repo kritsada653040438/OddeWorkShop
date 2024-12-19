@@ -1,18 +1,39 @@
-<%= form_with model: [ article, article.comments.build ] do |form| %>
-  <p>
-    <%= form.label :commenter %><br>
-    <%= form.text_field :commenter %>
-  </p>
-  <p>
-    <%= form.label :body %><br>
-    <%= form.textarea :body %>
-  </p>
-  <p>
-  <%= form.label :status %><br>
-  <%= form.select :status, Visible::VALID_STATUSES, selected: 'public' %>
-</p>
+<%= form_with model: [ article, article.comments.build ], 
+    class: 'max-w-md mx-auto p-6 bg-white shadow-md rounded-lg space-y-4' do |form| %>
+  <div>
+    <%= form.label :commenter, 'ชื่อผู้แสดงความคิดเห็น', 
+        class: 'block text-sm font-medium text-gray-700 mb-2' %>
+    <%= form.text_field :commenter, 
+        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500', 
+        placeholder: 'ป้อนชื่อของคุณ', 
+        required: true %>
+  </div>
 
-  <p>
-    <%= form.submit %>
-  </p>
+  <div>
+    <%= form.label :body, 'ข้อความความคิดเห็น', 
+        class: 'block text-sm font-medium text-gray-700 mb-2' %>
+    <%= form.text_area :body, 
+        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500', 
+        rows: 4, 
+        placeholder: 'เขียนความคิดเห็นของคุณที่นี่', 
+        required: true %>
+  </div>
+
+  <div>
+    <%= form.label :status, 'สถานะ', 
+        class: 'block text-sm font-medium text-gray-700 mb-2' %>
+    <%= form.select :status, 
+        [
+          ['สาธารณะ', 'public'], 
+          ['ส่วนตัว', 'private'], 
+          ['เก็บถาวร', 'archived']
+        ], 
+        { selected: 'public' },
+        class: 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500' %>
+  </div>
+
+  <div>
+    <%= form.submit 'ส่งความคิดเห็น', 
+        class: 'w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300' %>
+  </div>
 <% end %>
